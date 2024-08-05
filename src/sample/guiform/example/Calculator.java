@@ -1,6 +1,8 @@
 package sample.guiform.example;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Calculator {
     private JTextField resultsTxt;
@@ -24,6 +26,9 @@ public class Calculator {
     private JButton zeroBtn;
     private JButton digitBtn;
     private JButton equalBtn;
+    private Operation calcOperation;
+    private Double leftOperand;
+    private Double rightOperand;
 
 
     public static void main(String[] args) {
@@ -33,6 +38,108 @@ public class Calculator {
         frame.pack();
         frame.setVisible(true);
     }
+
+    public Calculator() {
+
+        sevenBtn.addActionListener(new NumberBtnClicked(sevenBtn.getText()));
+        eightBtn.addActionListener(new NumberBtnClicked(eightBtn.getText()));
+        nineBtn.addActionListener(new NumberBtnClicked(nineBtn.getText()));
+        fourBtn.addActionListener(new NumberBtnClicked(fourBtn.getText()));
+        fiveBtn.addActionListener(new NumberBtnClicked(fiveBtn.getText()));
+        sixBtn.addActionListener(new NumberBtnClicked(sixBtn.getText()));
+        oneBtn.addActionListener(new NumberBtnClicked(oneBtn.getText()));
+        twoBtn.addActionListener(new NumberBtnClicked(twoBtn.getText()));
+        threeBtn.addActionListener(new NumberBtnClicked(threeBtn.getText()));
+        zeroBtn.addActionListener(new NumberBtnClicked(zeroBtn.getText()));
+
+        percentBtn.addActionListener(new OperationBtnClicked(Operation.PERCENTAGE));
+        multiplyBtn.addActionListener(new OperationBtnClicked(Operation.MULTIPLICATION));
+        minusBtn.addActionListener(new OperationBtnClicked(Operation.SUBTRACTION));
+        addBtn.addActionListener(new OperationBtnClicked(Operation.ADDITION));
+        divideBtn.addActionListener(new OperationBtnClicked(Operation.DIVISION));
+        equalBtn.addActionListener(new EqualBtnClicked());
+        clearBtn.addActionListener(new ClearBtnClicked());
+        signBtn.addActionListener(new SignBtnClicked());
+        digitBtn.addActionListener(new DigitBtnClicked());
+    }
+
+    private class NumberBtnClicked implements ActionListener {
+
+        private String value;
+
+        public NumberBtnClicked(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (leftOperand == null || leftOperand == 0.0) {
+                value = resultsTxt.getText() + value;
+            }else{
+                rightOperand = Double.valueOf(value);
+            }
+            resultsTxt.setText(value);
+        }
+    }
+
+    private class OperationBtnClicked implements ActionListener {
+
+        private Operation operation;
+
+        public OperationBtnClicked(Operation operation) {
+            this.operation = operation;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            calcOperation = operation;
+            leftOperand = Double.valueOf(resultsTxt.getText());
+        }
+    }
+
+    private class ClearBtnClicked implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            resultsTxt.setText("");
+            leftOperand = 0.0;
+            rightOperand = 0.0;
+        }
+    }
+
+
+    private class DigitBtnClicked implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            resultsTxt.setText(resultsTxt.getText() + ".");
+        }
+    }
+
+    private class EqualBtnClicked implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Double output = calcOperation.getOperator().applyAsDouble(leftOperand, rightOperand);
+            resultsTxt.setText(output%1==0?String.valueOf(output.intValue()):String.valueOf(output));
+            leftOperand = 0.0;
+            rightOperand = 0.0;
+        }
+    }
+
+    private class SignBtnClicked implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            resultsTxt.setText("-"+ resultsTxt.getText());
+        }
+    }
+
+
+
+
+
+
 }
 
 
